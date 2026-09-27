@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.rikkeibank.customer.CustomerServiceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-09-27T12:22:40.929Z" hostname="UNKNOW-DEVICE" time="2.755">
+  <properties/>
+  <testcase name="testCreateCustomer_DuplicateIdentityNumber_ThrowsConflict()" classname="com.rikkeibank.customer.CustomerServiceTest" time="2.683"/>
+  <testcase name="testGetCustomerById_Success()" classname="com.rikkeibank.customer.CustomerServiceTest" time="0.028"/>
+  <system-out><![CDATA[19:22:43.529 [Test worker] INFO com.rikkeibank.customer.service.CustomerService -- Creating customer with CCCD: 001234567890
+19:22:43.662 [Test worker] INFO com.rikkeibank.customer.service.CustomerService -- [Cache-Aside] Cache MISS! Querying DB for Customer ID: 1
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

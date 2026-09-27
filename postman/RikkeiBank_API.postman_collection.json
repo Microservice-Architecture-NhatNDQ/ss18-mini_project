@@ -1,0 +1,521 @@
+{
+  "info": {
+    "name": "RikkeiBank API - Microservices Suite",
+    "_postman_id": "c1f72a6b-9c2e-4b95-a249-14a58ff0923a",
+    "description": "Comprehensive Postman Collection for RikkeiBank Digital Banking API through Spring Cloud API Gateway with Saga Distributed Transactions, Redis Cache-Aside, JWT Authentication, and Resilience4j Circuit Breaker.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00. Infrastructure & Config",
+      "item": [
+        {
+          "name": "Eureka Service Registry Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8761",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8761"
+            }
+          }
+        },
+        {
+          "name": "Config Server - Identity Service Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8888/identity-service/default",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8888",
+              "path": ["identity-service", "default"]
+            }
+          }
+        },
+        {
+          "name": "API Gateway Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{gatewayUrl}}/actuator/health",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["actuator", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01. Identity & Auth Service",
+      "item": [
+        {
+          "name": "1.1 Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set(\"adminToken\", jsonData.accessToken);",
+                  "    pm.environment.set(\"authToken\", jsonData.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@rikkeibank.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/auth/login",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Login as Teller",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set(\"tellerToken\", jsonData.accessToken);",
+                  "    pm.environment.set(\"authToken\", jsonData.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"teller01@rikkeibank.com\",\n  \"password\": \"teller123\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/auth/login",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Login as Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.accessToken) {",
+                  "    pm.environment.set(\"customerToken\", jsonData.accessToken);",
+                  "    pm.environment.set(\"authToken\", jsonData.accessToken);",
+                  "    pm.environment.set(\"refreshToken\", jsonData.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer01@gmail.com\",\n  \"password\": \"customer123\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/auth/login",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Refresh Token (Seamless Session)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/auth/refresh",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "auth", "refresh"]
+            }
+          }
+        },
+        {
+          "name": "1.5 Register New Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newcustomer@gmail.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Hoang Thi Mau\",\n  \"phone\": \"0911223344\",\n  \"role\": \"ROLE_CUSTOMER\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/auth/register",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "1.6 Admin Force Logout (Revoke Token in Redis)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/auth/force-logout/4",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "auth", "force-logout", "4"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Customer & Catalog Service",
+      "item": [
+        {
+          "name": "2.1 List Account Types (Cache-Aside)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/account-types",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "account-types"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Get Account Type By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/account-types/1",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "account-types", "1"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Create Account Type (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"typeCode\": \"CREDIT_PLATINUM\",\n  \"typeName\": \"Thẻ Tín Dụng Platinum\",\n  \"description\": \"Hạn mức lên đến 500 triệu đồng\",\n  \"interestRate\": 18.5,\n  \"minBalance\": 0,\n  \"currency\": \"VND\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/account-types",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "account-types"]
+            }
+          }
+        },
+        {
+          "name": "2.4 List All Customers",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tellerToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/customers",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "customers"]
+            }
+          }
+        },
+        {
+          "name": "2.5 Get Customer Profile By ID (Redis Cached)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/customers/1",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "customers", "1"]
+            }
+          }
+        },
+        {
+          "name": "2.6 List Staff (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/staff",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "staff"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Bank Account Service",
+      "item": [
+        {
+          "name": "3.1 List All Bank Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tellerToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/accounts",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "accounts"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Get Account by Number (Redis Cache)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/accounts/number/1000123456",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "accounts", "number", "1000123456"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Get Accounts by Customer ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/accounts/customer/1",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "accounts", "customer", "1"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Create New Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tellerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": 1,\n  \"accountTypeCode\": \"CHECKING\",\n  \"balance\": 10000000,\n  \"currency\": \"VND\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/accounts",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "accounts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Transaction & Saga Transfer Service",
+      "item": [
+        {
+          "name": "4.1 SAGA Transfer - Happy Path (Success)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromAccountNumber\": \"1000123456\",\n  \"toAccountNumber\": \"1000654321\",\n  \"amount\": 5000000,\n  \"description\": \"Chuyen tien mua laptop Rikkei\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/transfers",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        },
+        {
+          "name": "4.2 SAGA Transfer - Rollback (Simulate Failure & Compensating Refund)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromAccountNumber\": \"1000123456\",\n  \"toAccountNumber\": \"1000654321\",\n  \"amount\": 2000000,\n  \"description\": \"Test Saga Compensating Rollback Flow\",\n  \"simulateCreditFailure\": true\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/transfers",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        },
+        {
+          "name": "4.3 SAGA Transfer - Insufficient Funds (Debit Step Fails)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromAccountNumber\": \"1000123456\",\n  \"toAccountNumber\": \"1000654321\",\n  \"amount\": 999999999,\n  \"description\": \"Test Insufficient Funds\"\n}"
+            },
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/transfers",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "transfers"]
+            }
+          }
+        },
+        {
+          "name": "4.4 Teller Daily Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tellerToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/transactions/daily",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "transactions", "daily"]
+            }
+          }
+        },
+        {
+          "name": "4.5 Transactions by Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/transactions/account/1000123456",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "transactions", "account", "1000123456"]
+            }
+          }
+        },
+        {
+          "name": "4.6 List All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{tellerToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/transactions",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "transactions"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Notification Service (WebFlux + Kafka)",
+      "item": [
+        {
+          "name": "5.1 List All Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/notifications",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "notifications"]
+            }
+          }
+        },
+        {
+          "name": "5.2 Get Notifications by Customer ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/notifications/customer/1",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "notifications", "customer", "1"]
+            }
+          }
+        },
+        {
+          "name": "5.3 Live SSE Notification Stream",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Accept", "value": "text/event-stream" }
+            ],
+            "url": {
+              "raw": "{{gatewayUrl}}/api/v1/notifications/stream/1",
+              "host": ["{{gatewayUrl}}"],
+              "path": ["api", "v1", "notifications", "stream", "1"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

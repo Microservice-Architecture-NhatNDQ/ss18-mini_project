@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.rikkeibank.identity.AuthServiceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-27T12:22:56.424Z" hostname="UNKNOW-DEVICE" time="3.698">
+  <properties/>
+  <testcase name="testLogin_Success()" classname="com.rikkeibank.identity.AuthServiceTest" time="3.573"/>
+  <testcase name="testLogin_WrongPassword_ThrowsException()" classname="com.rikkeibank.identity.AuthServiceTest" time="0.034"/>
+  <testcase name="testRegister_Success()" classname="com.rikkeibank.identity.AuthServiceTest" time="0.032"/>
+  <system-out><![CDATA[19:22:59.923 [Test worker] INFO com.rikkeibank.identity.service.AuthService -- Processing login request for email: test@rikkeibank.com
+19:22:59.978 [Test worker] INFO com.rikkeibank.identity.service.AuthService -- User test@rikkeibank.com logged in successfully with role ROLE_CUSTOMER
+19:23:00.066 [Test worker] INFO com.rikkeibank.identity.service.AuthService -- Processing login request for email: test@rikkeibank.com
+19:23:00.118 [Test worker] INFO com.rikkeibank.identity.service.AuthService -- Processing registration request for email: test@rikkeibank.com
+19:23:00.119 [Test worker] INFO com.rikkeibank.identity.service.AuthService -- User registered successfully with ID: 1, role: ROLE_CUSTOMER
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

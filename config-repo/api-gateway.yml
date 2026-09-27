@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true
+      routes:
+        # Identity Service Routes (Auth, Register, Login, Refresh, Force Logout)
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - name: AuthenticationFilter
+              args:
+                skipAuth: true
+
+        # Customer Service Routes (Customers, Staff, Account Types Catalog)
+        - id: customer-service-customers
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/customers/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: customer-service-staff
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/staff/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: customer-service-account-types
+          uri: lb://customer-service
+          predicates:
+            - Path=/api/v1/account-types/**
+          filters:
+            - name: AuthenticationFilter
+
+        # Account Service Routes (Accounts, Balances, Deposit/Withdraw)
+        - id: account-service
+          uri: lb://account-service
+          predicates:
+            - Path=/api/v1/accounts/**
+          filters:
+            - name: AuthenticationFilter
+
+        # Transaction Service Routes (Transfers, Transactions, Saga)
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/v1/transactions/**, /api/v1/transfers/**
+          filters:
+            - name: AuthenticationFilter
+
+        # Notification Service Routes (Reactive Notifications)
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - name: AuthenticationFilter
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970

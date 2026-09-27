@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.rikkeibank.transaction.TransactionSagaServiceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-09-27T12:23:10.747Z" hostname="UNKNOW-DEVICE" time="3.552">
+  <properties/>
+  <testcase name="Saga Happy Path: Money Transfer completes successfully through Debit and Credit steps" classname="com.rikkeibank.transaction.TransactionSagaServiceTest" time="3.394"/>
+  <testcase name="Saga Compensating Rollback: Destination credit fails -&gt; Triggers Compensating Refund to source account" classname="com.rikkeibank.transaction.TransactionSagaServiceTest" time="0.101"/>
+  <system-out><![CDATA[19:23:13.910 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Starting Saga Money Transfer from 1000123456 to 1000654321, amount = 500000.00
+19:23:14.015 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Kafka event published to topic transaction-events: SAGA_TRANSFER_STARTED
+19:23:14.017 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Step 1] Calling Account Service to DEBIT 500000.00 from account 1000123456
+19:23:14.025 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Kafka event published to topic transaction-events: SAGA_DEBITED
+19:23:14.026 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Step 2] Calling Account Service to CREDIT 500000.00 to account 1000654321
+19:23:14.034 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga SUCCESS] Transfer TXN-65D3A740-234B-42A5 completed successfully!
+19:23:14.035 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Kafka event published to topic transaction-events: SAGA_TRANSFER_COMPLETED
+19:23:14.237 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Starting Saga Money Transfer from 1000123456 to 1000654321, amount = 500000.00
+19:23:14.240 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Kafka event published to topic transaction-events: SAGA_TRANSFER_STARTED
+19:23:14.241 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Step 1] Calling Account Service to DEBIT 500000.00 from account 1000123456
+19:23:14.243 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Kafka event published to topic transaction-events: SAGA_DEBITED
+19:23:14.243 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Step 2] Calling Account Service to CREDIT 500000.00 to account 1000654321
+19:23:14.247 [Test worker] WARN com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Step 2 Failed] Credit step failed (Destination account is locked). Initiating COMPENSATING ROLLBACK...
+19:23:14.248 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Compensating] Refunding 500000.00 back to source account 1000123456
+19:23:14.250 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- [Saga Compensating] Refund to 1000123456 completed successfully!
+19:23:14.252 [Test worker] INFO com.rikkeibank.transaction.service.TransactionSagaService -- Kafka event published to topic transaction-events: SAGA_TRANSFER_COMPENSATED
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

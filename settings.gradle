@@ -1,0 +1,10 @@
+rootProject.name = 'rikkeibank-microservices'
+
+include 'config-server'
+include 'eureka-server'
+include 'api-gateway'
+include 'identity-service'
+include 'customer-service'
+include 'account-service'
+include 'transaction-service'
+include 'notification-service'

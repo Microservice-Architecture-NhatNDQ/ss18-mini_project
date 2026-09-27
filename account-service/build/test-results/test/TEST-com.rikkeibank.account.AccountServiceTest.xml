@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.rikkeibank.account.AccountServiceTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-09-27T12:22:24.331Z" hostname="UNKNOW-DEVICE" time="3.139">
+  <properties/>
+  <testcase name="testDebit_Success()" classname="com.rikkeibank.account.AccountServiceTest" time="3.022"/>
+  <testcase name="testDebit_InsufficientFunds_ThrowsException()" classname="com.rikkeibank.account.AccountServiceTest" time="0.044"/>
+  <testcase name="testCredit_Success()" classname="com.rikkeibank.account.AccountServiceTest" time="0.016"/>
+  <system-out><![CDATA[19:22:27.283 [Test worker] INFO com.rikkeibank.account.service.AccountService -- Processing DEBIT on account 1000123456: amount = 200000.00
+19:22:27.334 [Test worker] INFO com.rikkeibank.account.service.AccountService -- DEBIT successful for 1000123456. Previous: 1000000.00, New: 800000.00
+19:22:27.415 [Test worker] INFO com.rikkeibank.account.service.AccountService -- Processing DEBIT on account 1000123456: amount = 2000000.00
+19:22:27.465 [Test worker] INFO com.rikkeibank.account.service.AccountService -- Processing CREDIT on account 1000123456: amount = 500000.00
+19:22:27.468 [Test worker] INFO com.rikkeibank.account.service.AccountService -- CREDIT successful for 1000123456. Previous: 1000000.00, New: 1500000.00
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
